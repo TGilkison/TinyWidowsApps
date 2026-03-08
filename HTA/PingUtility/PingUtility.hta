@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ping Utility</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <HTA:APPLICATION
+        ID="PingUtility"
+        APPLICATIONNAME="Ping Utility"
+        VERSION="2.0"
+        BORDER="thick"
+        BORDERSTYLE="normal"
+        CAPTION="yes"
+        CONTEXTMENU="yes"
+        MAXIMIZEBUTTON="yes"
+        MINIMIZEBUTTON="yes"
+        SCROLL="auto"
+        SHOWINTASKBAR="yes"
+        SINGLEINSTANCE="yes"
+        SYSMENU="yes"
+    />
+    <style>
+        body {
+            font-family: Segoe UI, Tahoma, Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333355;
+        }
+        h1 {
+            color: #00d4ff;
+            font-size: 26px;
+            margin: 0 0 5px 0;
+        }
+        .subtitle {
+            color: #888899;
+            font-size: 13px;
+        }
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        /* 3D Style Buttons - IE Compatible */
+        .btn {
+            padding: 12px 24px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            vertical-align: middle;
+        }
+        .btn-start {
+            background-color: #00d4ff;
+            color: #000000;
+            border-top: 2px solid #66e5ff;
+            border-left: 2px solid #66e5ff;
+            border-right: 2px solid #0099bb;
+            border-bottom: 3px solid #006688;
+        }
+        .btn-start:hover {
+            background-color: #33ddff;
+        }
+        .btn-start:active {
+            border-top: 2px solid #006688;
+            border-left: 2px solid #006688;
+            border-right: 2px solid #66e5ff;
+            border-bottom: 2px solid #66e5ff;
+        }
+        .btn-stop {
+            background-color: #ff4757;
+            color: #ffffff;
+            border-top: 2px solid #ff7a85;
+            border-left: 2px solid #ff7a85;
+            border-right: 2px solid #cc2233;
+            border-bottom: 3px solid #991122;
+        }
+        .btn-stop:hover {
+            background-color: #ff6b78;
+        }
+        .btn-add {
+            background-color: #2ecc71;
+            color: #ffffff;
+            border-top: 2px solid #5dde9a;
+            border-left: 2px solid #5dde9a;
+            border-right: 2px solid #25a85c;
+            border-bottom: 3px solid #1d8348;
+        }
+        .btn-add:hover {
+            background-color: #45d988;
+        }
+        .btn-reset {
+            background-color: #9b59b6;
+            color: #ffffff;
+            border-top: 2px solid #bb7dd4;
+            border-left: 2px solid #bb7dd4;
+            border-right: 2px solid #7d4592;
+            border-bottom: 3px solid #5e346e;
+        }
+        .btn-reset:hover {
+            background-color: #ab6ac6;
+        }
+        .btn-edit {
+            background-color: #f39c12;
+            color: #ffffff;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+            margin-right: 4px;
+        }
+        .btn-edit:hover {
+            background-color: #f1c40f;
+        }
+        .btn-delete {
+            background-color: #c0392b;
+            color: #ffffff;
+            border: none;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .btn-delete:hover {
+            background-color: #e74c3c;
+        }
+        .btn-trace {
+            background-color: #2980b9;
+            color: #ffffff;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+            margin-left: 4px;
+        }
+        .btn-trace:hover {
+            background-color: #3498db;
+        }
+        .interval-badge {
+            display: inline-block;
+            background-color: #2a2a4e;
+            padding: 12px 18px;
+            color: #888899;
+            font-size: 12px;
+            border: 1px solid #444466;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        #intervalSelect {
+            background-color: #1a1a2e;
+            color: #ffffff;
+            border: 1px solid #444466;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        #intervalSelect:hover {
+            border-color: #6666aa;
+        }
+        .debug-toggle {
+            display: inline-block;
+            margin-left: 15px;
+            color: #888899;
+            font-size: 12px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        .debug-toggle input {
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .btn-download {
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            padding: 4px 12px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .btn-download:hover {
+            background-color: #5dade2;
+        }
+        /* Tab Styles */
+        .tab-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #333355;
+            padding-bottom: 8px;
+        }
+        .tab-btn {
+            background-color: #2a2a4e;
+            color: #888899;
+            border: 1px solid #333355;
+            border-bottom: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 4px;
+        }
+        .tab-btn:hover {
+            background-color: #3a3a5e;
+            color: #aaaacc;
+        }
+        .tab-btn.active {
+            background-color: #1a1a2e;
+            color: #ffffff;
+            border-color: #6666aa;
+            border-bottom: 2px solid #1a1a2e;
+        }
+        .tab-content {
+            min-height: 150px;
+        }
+        #traceLog {
+            height: 200px;
+            overflow-y: auto;
+            background: #0d0d1a;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #00ccff;
+            border: 1px solid #333355;
+        }
+        /* Table Styles */
+        .table-container {
+            background-color: #252545;
+            border: 1px solid #333355;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #1e3a5f;
+            padding: 14px 15px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 12px;
+            color: #88aacc;
+            border-bottom: 2px solid #2a5080;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #333355;
+            font-size: 13px;
+            color: #cccccc;
+        }
+        .status-success {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .status-failed {
+            color: #ff4757;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        /* Log Section */
+        .log-section h3 {
+            color: #888899;
+            font-size: 13px;
+            margin: 0 0 8px 0;
+        }
+        #log {
+            background-color: #0d0d15;
+            color: #00ff88;
+            font-family: Consolas, Courier New, monospace;
+            padding: 12px;
+            height: 160px;
+            overflow-y: scroll;
+            font-size: 11px;
+            border: 1px solid #004422;
+        }
+        #log div {
+            padding: 1px 0;
+        }
+        /* Modal Dialog Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        .modal-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #2a2a4e 0%, #1a1a2e 100%);
+            border: 2px solid #4444aa;
+            padding: 25px;
+            min-width: 350px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        .modal-title {
+            color: #00ddff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #444466;
+            padding-bottom: 10px;
+        }
+        .modal-message {
+            color: #ccccdd;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            background-color: #1a1a2e;
+            border: 1px solid #444466;
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        .modal-input:focus {
+            border-color: #00ddff;
+            outline: none;
+        }
+        .modal-buttons {
+            text-align: right;
+        }
+        .modal-btn {
+            padding: 10px 25px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+        .modal-btn-ok {
+            background-color: #27ae60;
+            color: #ffffff;
+        }
+        .modal-btn-ok:hover {
+            background-color: #2ecc71;
+        }
+        .modal-btn-cancel {
+            background-color: #555566;
+            color: #ffffff;
+        }
+        .modal-btn-cancel:hover {
+            background-color: #666677;
+        }
+    </style>
+</head>
+
+<!-- HHCtrl object for maximizing window - more reliable than WINDOWSTATE -->
+<object id="HHCtrlMaximizeWindowObject" classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11">
+    <param name="command" value="maximize" />
+</object>
+
+<script type="text/javascript">
+function _jsMaxWin() {
+    try {
+        HHCtrlMaximizeWindowObject.Click();
+    } catch(err) {
+        // Fallback: try to resize manually
+        window.moveTo(0, 0);
+        window.resizeTo(screen.availWidth, screen.availHeight);
+    }
+}
+</script>
+
+<script language="VBScript">
+    Option Explicit
+
+    ' Global variables with naming convention prefixes
+    ' gvo = global variable object, gvb = global variable boolean, gvi = global variable integer
+    Dim gvoWMI, gvoTargets
+    Dim gvbIsRunning
+    Dim gviTimerID, gviPingInterval
+    Dim gviWindowWidth, gviWindowHeight
+    Dim gvbDebugMode, gvbInitialized
+    Dim gvoFSO, gvsLogFile, gvoShell
+    Dim gvsModalCallback, gvsModalResult
+
+    ' Window dimensions
+    gviWindowWidth = 950
+    gviWindowHeight = 700
+    gvbDebugMode = False
+    gvbInitialized = False
+    gviPingInterval = 5000  ' Default 5 seconds
+
+    ' Initialize file system object for logging
+    Set gvoFSO = CreateObject("Scripting.FileSystemObject")
+    Set gvoShell = CreateObject("WScript.Shell")
+    gvsLogFile = gvoShell.CurrentDirectory & "\debug.log"
+
+    ' Clear previous log file and write initial entry
+    On Error Resume Next
+    gvoFSO.DeleteFile gvsLogFile, True
+    Err.Clear
+
+    ' Write immediate log to confirm script is parsing
+    Dim objInitLog
+    Set objInitLog = gvoFSO.OpenTextFile(gvsLogFile, 8, True)
+    objInitLog.WriteLine Now & " - SCRIPT LOADED - VBScript block parsed successfully"
+    objInitLog.Close
+    Set objInitLog = Nothing
+    On Error GoTo 0
+
+    Sub DebugLog(strMessage)
+        On Error Resume Next
+        If gvbDebugMode Then
+            ' Write to file
+            Dim objFile
+            Set objFile = gvoFSO.OpenTextFile(gvsLogFile, 8, True)
+            If Not objFile Is Nothing Then
+                objFile.WriteLine Now & " - " & strMessage
+                objFile.Close
+                Set objFile = Nothing
+            End If
+
+            ' Also write to screen
+            Dim objLog
+            Set objLog = document.getElementById("debugLog")
+            If Not objLog Is Nothing Then
+                objLog.innerHTML = objLog.innerHTML & Now & " - " & strMessage & "<br>"
+                objLog.scrollTop = objLog.scrollHeight
+            End If
+        End If
+        On Error GoTo 0
+    End Sub
+
+    Sub Window_OnLoad()
+        On Error Resume Next
+
+        DebugLog "Window_OnLoad starting..."
+        DebugLog "Initializing gvbIsRunning..."
+        gvbIsRunning = False
+        DebugLog "gvbIsRunning = " & gvbIsRunning
+
+        ' Initialize global objects
+        DebugLog "Creating WMI object..."
+        Set gvoWMI = GetObject("winmgmts:\\.\root\cimv2")
+        If Err.Number <> 0 Then
+            DebugLog "ERROR creating WMI: " & Err.Description & " (" & Hex(Err.Number) & ")"
+            Err.Clear
+        Else
+            DebugLog "WMI object created successfully"
+        End If
+
+        DebugLog "Creating Dictionary object..."
+        Set gvoTargets = CreateObject("Scripting.Dictionary")
+        If Err.Number <> 0 Then
+            DebugLog "ERROR creating Dictionary: " & Err.Description & " (" & Hex(Err.Number) & ")"
+            Err.Clear
+        Else
+            DebugLog "Dictionary object created successfully"
+        End If
+
+        gvbIsRunning = False
+        DebugLog "gvbIsRunning set to False"
+
+        ' Center and resize window
+        DebugLog "Centering window..."
+        CenterWindow
+        window.resizeTo gviWindowWidth, gviWindowHeight
+        DebugLog "Window resized"
+
+        ' Initialize targets and refresh display
+        DebugLog "Calling InitTargets..."
+        InitTargets
+        DebugLog "InitTargets completed. Dictionary count: " & gvoTargets.Count
+
+        DebugLog "Calling RefreshTable..."
+        RefreshTable
+        DebugLog "RefreshTable completed"
+
+        gvbInitialized = True
+        DebugLog "Initialization COMPLETE - gvbInitialized = True"
+
+        On Error GoTo 0
+        LogMsg "Application started - Ready to monitor"
+    End Sub
+
+    Sub Window_OnUnload()
+        ' Clean up timer if running
+        If gvbIsRunning Then
+            window.clearInterval(gviTimerID)
+        End If
+
+        ' Clean up objects
+        Set gvoTargets = Nothing
+        Set gvoWMI = Nothing
+    End Sub
+
+    Sub CenterWindow()
+        ' Delay maximize to ensure window is fully loaded
+        window.setTimeout "DoMaximize", 200, "VBScript"
+    End Sub
+
+    Sub DoMaximize()
+        ' Try HHCtrl method first, then fallback to resize
+        On Error Resume Next
+        window.focus
+        document.getElementById("MaximizeWindow").click
+        If Err.Number <> 0 Then
+            Err.Clear
+            window.moveTo 0, 0
+            window.resizeTo window.screen.availWidth, window.screen.availHeight
+        End If
+        On Error Goto 0
+    End Sub
+
+    Sub InitTargets()
+        ' Data array structure:
+        ' 0=Name, 1=IP, 2=Status, 3=SuccessCount, 4=FailCount, 5=LastPingTime
+        ' 6=CurrentLatency, 7=LatencySum, 8=LatencySquaredSum, 9=ConsecutiveFails
+        On Error Resume Next
+        Dim strGatewayIP
+        strGatewayIP = GetDefaultGateway()
+        If gvoTargets Is Nothing Then
+            Set gvoTargets = CreateObject("Scripting.Dictionary")
+        End If
+        gvoTargets.Add "router", Array("Router/Gateway", strGatewayIP, "Pending", 0, 0, "-", 0, 0, 0, 0)
+        gvoTargets.Add "google", Array("Google DNS", "8.8.8.8", "Pending", 0, 0, "-", 0, 0, 0, 0)
+        On Error GoTo 0
+    End Sub
+
+    Function GetDefaultGateway()
+        ' Use WMI to get default gateway IP
+        On Error Resume Next
+        Dim colAdapters, objAdapter, arrGateways
+        GetDefaultGateway = "192.168.1.1"  ' Fallback default
+
+        Set colAdapters = gvoWMI.ExecQuery( _
+            "SELECT DefaultIPGateway FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled=True")
+
+        If Err.Number <> 0 Then
+            Err.Clear
+            Exit Function
+        End If
+
+        For Each objAdapter In colAdapters
+            If Not IsNull(objAdapter.DefaultIPGateway) Then
+                arrGateways = objAdapter.DefaultIPGateway
+                If UBound(arrGateways) >= 0 Then
+                    If arrGateways(0) <> "" Then
+                        GetDefaultGateway = arrGateways(0)
+                        Exit Function
+                    End If
+                End If
+            End If
+        Next
+        On Error GoTo 0
+    End Function
+
+    Function GetLocalIP()
+        ' Use WMI to get local IP address
+        On Error Resume Next
+        Dim colAdapters, objAdapter, strIP
+        GetLocalIP = "192.168.1.1"
+
+        Set colAdapters = gvoWMI.ExecQuery( _
+            "SELECT IPAddress FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled=True")
+
+        If Err.Number <> 0 Then
+            Err.Clear
+            Exit Function
+        End If
+
+        For Each objAdapter In colAdapters
+            If Not IsNull(objAdapter.IPAddress) Then
+                For Each strIP In objAdapter.IPAddress
+                    ' Check for IPv4 (contains dot) and not loopback/APIPA
+                    If InStr(strIP, ".") > 0 Then
+                        If strIP <> "127.0.0.1" And Left(strIP, 4) <> "169." Then
+                            GetLocalIP = strIP
+                            Exit Function
+                        End If
+                    End If
+                Next
+            End If
+        Next
+        On Error GoTo 0
+    End Function
+
+    Sub ToggleMonitoring()
+        On Error Resume Next
+        DebugLog "ToggleMonitoring called"
+        DebugLog "gvbInitialized = " & gvbInitialized
+        DebugLog "gvbIsRunning = " & gvbIsRunning
+        DebugLog "gvoTargets Is Nothing = " & (gvoTargets Is Nothing)
+
+        If Not gvbInitialized Then
+            DebugLog "ERROR: App not initialized yet!"
+            MsgBox "Application not fully initialized. Please wait.", vbExclamation, "Error"
+            Exit Sub
+        End If
+
+        Dim objBtn
+        Set objBtn = document.getElementById("btnStart")
+        If Err.Number <> 0 Then
+            DebugLog "ERROR getting btnStart: " & Err.Description
+            Err.Clear
+        End If
+
+        If gvbIsRunning Then
+            ' Stop monitoring
+            DebugLog "Stopping monitoring..."
+            window.clearInterval(gviTimerID)
+            gvbIsRunning = False
+            objBtn.innerText = "START"
+            objBtn.className = "btn btn-start"
+            LogMsg "Monitoring stopped"
+        Else
+            ' Start monitoring
+            DebugLog "Starting monitoring..."
+            gvbIsRunning = True
+            objBtn.innerText = "STOP"
+            objBtn.className = "btn btn-stop"
+            LogMsg "Monitoring started..."
+            DebugLog "Calling PingAll..."
+            PingAll
+            DebugLog "Setting interval timer..."
+            gviTimerID = window.setInterval(GetRef("PingAll"), gviPingInterval)
+            DebugLog "Timer ID = " & gviTimerID
+        End If
+
+        Set objBtn = Nothing
+        On Error GoTo 0
+    End Sub
+
+    Sub PingAll()
+        ' Data array: 0=Name, 1=IP, 2=Status, 3=Success, 4=Fail, 5=LastTime
+        ' 6=CurrentLatency, 7=LatencySum, 8=LatencySquaredSum, 9=ConsecutiveFails
+        On Error Resume Next
+        Dim strKey, arrData, blnResult, strTimeNow, strPrevStatus
+
+        DebugLog "PingAll called"
+
+        ' Ensure gvoTargets is initialized
+        If gvoTargets Is Nothing Then
+            DebugLog "ERROR: gvoTargets Is Nothing in PingAll!"
+            Exit Sub
+        End If
+
+        DebugLog "gvoTargets.Count = " & gvoTargets.Count
+
+        strTimeNow = FormatDateTime(Now, 4)
+
+        For Each strKey In gvoTargets.Keys
+            arrData = gvoTargets(strKey)
+            strPrevStatus = arrData(2)
+            blnResult = PingHost(arrData(1))
+
+            If blnResult Then
+                arrData(2) = "Success"
+                arrData(3) = arrData(3) + 1
+                arrData(6) = gviLastLatency
+                arrData(7) = arrData(7) + gviLastLatency
+                arrData(8) = arrData(8) + (gviLastLatency * gviLastLatency)
+                arrData(9) = 0  ' Reset consecutive failures
+                LogMsg "[OK] " & arrData(0) & " (" & arrData(1) & ") - " & gviLastLatency & "ms"
+            Else
+                arrData(2) = "Failed"
+                arrData(4) = arrData(4) + 1
+                arrData(6) = 0
+                arrData(9) = arrData(9) + 1  ' Increment consecutive failures
+                LogMsg "[FAIL] " & arrData(0) & " (" & arrData(1) & ") - Consecutive: " & arrData(9)
+
+                ' Alert if host just went down
+                If strPrevStatus = "Success" Then
+                    AlertHostDown arrData(0), arrData(1)
+                End If
+            End If
+            arrData(5) = strTimeNow
+            gvoTargets(strKey) = arrData
+        Next
+
+        RefreshTable
+    End Sub
+
+    Sub AlertHostDown(strName, strIP)
+        ' Visual/audio alert when host goes down
+        document.getElementById("btnStart").style.backgroundColor = "#ff0000"
+        LogMsg "*** ALERT: " & strName & " (" & strIP & ") is DOWN! ***"
+    End Sub
+
+    Sub TracerouteHost(strIP, strName)
+        ' Perform traceroute using WMI with incrementing TTL
+        Dim intTTL, intMaxHops, colPings, objPing, strHop, strResult
+        Dim blnReached, intTimeout
+
+        ' Switch to traceroute tab
+        SwitchTab "trace"
+
+        ' Clear previous trace results
+        document.getElementById("traceLog").innerHTML = ""
+
+        TraceLog "=========================================="
+        TraceLog "TRACEROUTE: " & strName & " (" & strIP & ")"
+        TraceLog "Started: " & Now
+        TraceLog "=========================================="
+
+        intMaxHops = 30
+        intTimeout = 2000
+        blnReached = False
+
+        On Error Resume Next
+        For intTTL = 1 To intMaxHops
+            Set colPings = gvoWMI.ExecQuery( _
+                "SELECT StatusCode, ResponseTime, ProtocolAddress FROM Win32_PingStatus " & _
+                "WHERE Address='" & strIP & "' AND TimeToLive=" & intTTL & " AND Timeout=" & intTimeout)
+
+            If Err.Number <> 0 Then
+                TraceLog "  " & intTTL & ": Error - " & Err.Description
+                Err.Clear
+            Else
+                For Each objPing In colPings
+                    If Not IsNull(objPing.ProtocolAddress) Then
+                        strHop = objPing.ProtocolAddress
+                    Else
+                        strHop = "*"
+                    End If
+
+                    If Not IsNull(objPing.ResponseTime) Then
+                        strResult = strHop & " (" & objPing.ResponseTime & " ms)"
+                    Else
+                        strResult = strHop & " (timeout)"
+                    End If
+
+                    TraceLog "  " & Right("  " & intTTL, 3) & ":  " & strResult
+
+                    ' Check if we reached destination
+                    If objPing.StatusCode = 0 Then
+                        blnReached = True
+                    End If
+                Next
+            End If
+
+            Set colPings = Nothing
+
+            If blnReached Then Exit For
+        Next
+        On Error GoTo 0
+
+        TraceLog "------------------------------------------"
+        If blnReached Then
+            TraceLog "  COMPLETE - Destination reached in " & intTTL & " hops"
+        Else
+            TraceLog "  INCOMPLETE - Max hops (" & intMaxHops & ") reached"
+        End If
+        TraceLog ""
+        TraceLog "NOTE: Timeouts (*) are normal. Many routers are"
+        TraceLog "configured to not respond to traceroute probes"
+        TraceLog "for security reasons. The packet still passes"
+        TraceLog "through these hops successfully."
+        TraceLog "=========================================="
+
+        LogMsg "Traceroute completed for " & strName & " (" & strIP & ")"
+    End Sub
+
+    Dim gviLastLatency  ' Global to store last ping latency
+
+    Function PingHost(strHostName)
+        ' Use WMI Win32_PingStatus - returns True/False and sets gviLastLatency
+        On Error Resume Next
+        Dim colPings, objPing
+        PingHost = False
+        gviLastLatency = 0
+
+        Set colPings = gvoWMI.ExecQuery( _
+            "SELECT StatusCode, ResponseTime FROM Win32_PingStatus " & _
+            "WHERE Address='" & strHostName & "' AND Timeout=1000")
+
+        If Err.Number <> 0 Then
+            Err.Clear
+            Exit Function
+        End If
+
+        For Each objPing In colPings
+            If Not IsNull(objPing.StatusCode) Then
+                If objPing.StatusCode = 0 Then
+                    PingHost = True
+                    If Not IsNull(objPing.ResponseTime) Then
+                        gviLastLatency = objPing.ResponseTime
+                    End If
+                    Exit For
+                End If
+            End If
+        Next
+
+        Set colPings = Nothing
+        On Error GoTo 0
+    End Function
+
+    Sub RefreshTable()
+        ' Data array: 0=Name, 1=IP, 2=Status, 3=Success, 4=Fail, 5=LastTime
+        ' 6=CurrentLatency, 7=LatencySum, 8=LatencySquaredSum, 9=ConsecutiveFails
+        Dim objTbl, strKey, arrData, strClass, objRow, objCell
+        Dim dblAvg, dblJitter, dblLoss, dblUptime, intTotal, dblVariance
+
+        ' Ensure gvoTargets is initialized
+        If gvoTargets Is Nothing Then
+            Exit Sub
+        End If
+
+        Set objTbl = document.getElementById("tableBody")
+
+        ' Clear existing rows
+        Do While objTbl.rows.length > 0
+            objTbl.deleteRow(0)
+        Loop
+
+        ' Add rows
+        For Each strKey In gvoTargets.Keys
+            arrData = gvoTargets(strKey)
+            Select Case arrData(2)
+                Case "Success": strClass = "status-success"
+                Case "Failed": strClass = "status-failed"
+                Case Else: strClass = "status-pending"
+            End Select
+
+            ' Calculate metrics
+            intTotal = arrData(3) + arrData(4)
+            If arrData(3) > 0 Then
+                dblAvg = Round(arrData(7) / arrData(3), 1)
+                ' Jitter = Sqrt(E[X^2] - E[X]^2)
+                dblVariance = (arrData(8) / arrData(3)) - (dblAvg * dblAvg)
+                If dblVariance > 0 Then
+                    dblJitter = Round(Sqr(dblVariance), 1)
+                Else
+                    dblJitter = 0
+                End If
+            Else
+                dblAvg = 0
+                dblJitter = 0
+            End If
+            If intTotal > 0 Then
+                dblLoss = Round((arrData(4) / intTotal) * 100, 1)
+                dblUptime = Round((arrData(3) / intTotal) * 100, 1)
+            Else
+                dblLoss = 0
+                dblUptime = 0
+            End If
+
+            Set objRow = objTbl.insertRow()
+            objRow.setAttribute "data-key", strKey
+            Set objCell = objRow.insertCell() : objCell.innerText = arrData(0)
+            Set objCell = objRow.insertCell() : objCell.innerText = arrData(1)
+            Set objCell = objRow.insertCell() : objCell.innerText = arrData(2) : objCell.className = strClass
+            Set objCell = objRow.insertCell() : objCell.innerText = arrData(3) & "/" & arrData(4)
+            Set objCell = objRow.insertCell() : objCell.innerText = arrData(5)
+            Set objCell = objRow.insertCell() : objCell.innerText = arrData(6) & " ms"
+            Set objCell = objRow.insertCell() : objCell.innerText = dblAvg & " ms"
+            Set objCell = objRow.insertCell() : objCell.innerText = dblJitter & " ms"
+            Set objCell = objRow.insertCell() : objCell.innerText = dblLoss & "%"
+            Set objCell = objRow.insertCell() : objCell.innerText = dblUptime & "%"
+            Set objCell = objRow.insertCell()
+            objCell.innerHTML = "<button class=""btn-edit"" onclick=""vbscript:EditEntry('" & strKey & "')"">Edit</button> " & _
+                "<button class=""btn-delete"" onclick=""vbscript:DeleteEntry('" & strKey & "')"">X</button> " & _
+                "<button class=""btn-trace"" onclick=""vbscript:TracerouteHost('" & arrData(1) & "', '" & arrData(0) & "')"">Trace</button>"
+        Next
+
+        Set objTbl = Nothing
+    End Sub
+
+    Dim gvsNewIP  ' Temp storage for multi-step dialog
+
+    Sub AddIP()
+        ' Ensure gvoTargets is initialized
+        If gvoTargets Is Nothing Then
+            ShowAlert "Application not fully loaded. Please wait."
+            Exit Sub
+        End If
+
+        ShowPrompt "Add IP Address", "Enter IP address or hostname:", "AddIP_Step2"
+    End Sub
+
+    Sub AddIP_Step2(strIP)
+        If strIP = "" Then Exit Sub
+        gvsNewIP = strIP
+        ShowPrompt "Add IP Address", "Enter a friendly name for " & strIP & ":", "AddIP_Step3"
+    End Sub
+
+    Sub AddIP_Step3(strName)
+        ' Data array: 0=Name, 1=IP, 2=Status, 3=Success, 4=Fail, 5=LastTime
+        ' 6=CurrentLatency, 7=LatencySum, 8=LatencySquaredSum, 9=ConsecutiveFails
+        Dim strKey
+        If strName = "" Then strName = gvsNewIP
+        strKey = Replace(gvsNewIP, ".", "_")
+        strKey = Replace(strKey, ":", "_")
+
+        If Not gvoTargets.Exists(strKey) Then
+            gvoTargets.Add strKey, Array(strName, gvsNewIP, "Pending", 0, 0, "-", 0, 0, 0, 0)
+            RefreshTable
+            LogMsg "Added: " & strName & " (" & gvsNewIP & ")"
+        Else
+            ShowAlert "Address already exists: " & gvsNewIP
+        End If
+        gvsNewIP = ""
+    End Sub
+
+    Sub ResetCounters()
+        Dim strKey, arrData, objLog, objDebugLog
+
+        ' Ensure gvoTargets is initialized
+        If gvoTargets Is Nothing Then
+            ShowAlert "Application not fully loaded. Please wait."
+            Exit Sub
+        End If
+
+        For Each strKey In gvoTargets.Keys
+            arrData = gvoTargets(strKey)
+            arrData(2) = "Pending"
+            arrData(3) = 0
+            arrData(4) = 0
+            arrData(5) = "-"
+            arrData(6) = 0  ' Current Latency
+            arrData(7) = 0  ' Latency Sum
+            arrData(8) = 0  ' Latency Squared Sum
+            arrData(9) = 0  ' Consecutive Fails
+            gvoTargets(strKey) = arrData
+        Next
+
+        ' Reset Start button color if it was red from alert
+        document.getElementById("btnStart").style.backgroundColor = "#27ae60"
+        RefreshTable
+
+        ' Clear activity log
+        Set objLog = document.getElementById("log")
+        objLog.innerHTML = ""
+
+        ' Clear debug log
+        Set objDebugLog = document.getElementById("debugLog")
+        If Not objDebugLog Is Nothing Then
+            objDebugLog.innerHTML = ""
+        End If
+
+        LogMsg "All counters and logs reset."
+    End Sub
+
+    Sub DeleteEntry(strKey)
+        If gvoTargets Is Nothing Then
+            Exit Sub
+        End If
+
+        If gvoTargets.Exists(strKey) Then
+            Dim arrData
+            arrData = gvoTargets(strKey)
+            gvoTargets.Remove strKey
+            RefreshTable
+            LogMsg "Removed: " & arrData(0) & " (" & arrData(1) & ")"
+        End If
+    End Sub
+
+    Dim gvsEditKey  ' Temp storage for edit operation
+    Dim gvsEditIP   ' Temp storage for new IP during edit
+
+    Sub EditEntry(strKey)
+        If gvoTargets Is Nothing Then
+            Exit Sub
+        End If
+
+        If gvoTargets.Exists(strKey) Then
+            Dim arrData
+            arrData = gvoTargets(strKey)
+            gvsEditKey = strKey
+            ShowPrompt "Edit Entry", "Edit IP address:", "EditEntry_Step2"
+            document.getElementById("modalInput").value = arrData(1)
+        End If
+    End Sub
+
+    Sub EditEntry_Step2(strNewIP)
+        If strNewIP = "" Then
+            gvsEditKey = ""
+            Exit Sub
+        End If
+
+        gvsEditIP = strNewIP
+
+        If gvoTargets.Exists(gvsEditKey) Then
+            Dim arrData
+            arrData = gvoTargets(gvsEditKey)
+            ShowPrompt "Edit Entry", "Edit name:", "EditEntry_Step3"
+            document.getElementById("modalInput").value = arrData(0)
+        End If
+    End Sub
+
+    Sub EditEntry_Step3(strNewName)
+        If strNewName = "" Then
+            gvsEditKey = ""
+            gvsEditIP = ""
+            Exit Sub
+        End If
+
+        If gvoTargets.Exists(gvsEditKey) Then
+            Dim arrData, strOldName, strOldIP
+            arrData = gvoTargets(gvsEditKey)
+            strOldName = arrData(0)
+            strOldIP = arrData(1)
+            arrData(0) = strNewName
+            arrData(1) = gvsEditIP
+            ' Reset stats when IP changes
+            If strOldIP <> gvsEditIP Then
+                arrData(2) = "Pending"
+                arrData(3) = 0
+                arrData(4) = 0
+                arrData(5) = "-"
+                arrData(6) = 0
+                arrData(7) = 0
+                arrData(8) = 0
+                arrData(9) = 0
+            End If
+            gvoTargets(gvsEditKey) = arrData
+            RefreshTable
+            LogMsg "Edited: " & strOldName & " (" & strOldIP & ") -> " & strNewName & " (" & gvsEditIP & ")"
+        End If
+        gvsEditKey = ""
+        gvsEditIP = ""
+    End Sub
+
+    Sub ChangeInterval()
+        Dim objSelect, strLabel
+        Set objSelect = document.getElementById("intervalSelect")
+        gviPingInterval = CLng(objSelect.value)
+
+        ' Get friendly label for logging
+        strLabel = objSelect.options(objSelect.selectedIndex).text
+        LogMsg "Ping interval changed to " & strLabel
+
+        ' If monitoring is running, restart timer with new interval
+        If gvbIsRunning Then
+            window.clearInterval(gviTimerID)
+            gviTimerID = window.setInterval(GetRef("PingAll"), gviPingInterval)
+            DebugLog "Timer restarted with interval: " & gviPingInterval
+        End If
+
+        Set objSelect = Nothing
+    End Sub
+
+    Sub LogMsg(strMsg)
+        Dim objLog, objNewLine
+        Set objLog = document.getElementById("log")
+        Set objNewLine = document.createElement("div")
+        objNewLine.innerText = "[" & FormatDateTime(Now, 4) & "] " & strMsg
+
+        If objLog.childNodes.length > 0 Then
+            objLog.insertBefore objNewLine, objLog.firstChild
+        Else
+            objLog.appendChild objNewLine
+        End If
+
+        ' Keep log from growing too large (max 500 entries)
+        Do While objLog.childNodes.length > 500
+            objLog.removeChild objLog.lastChild
+        Loop
+
+        Set objNewLine = Nothing
+        Set objLog = Nothing
+    End Sub
+
+    Sub ToggleDebugLog()
+        Dim objCheckbox, objDebugSection
+        Set objCheckbox = document.getElementById("debugToggle")
+        Set objDebugSection = document.getElementById("debugSection")
+
+        If objCheckbox.checked Then
+            gvbDebugMode = True
+            objDebugSection.style.display = "block"
+            LogMsg "Debug logging enabled"
+        Else
+            gvbDebugMode = False
+            objDebugSection.style.display = "none"
+            LogMsg "Debug logging disabled"
+        End If
+    End Sub
+
+    Sub SwitchTab(strTab)
+        Dim objTabActivity, objTabTrace, objLogActivity, objLogTrace
+        Set objTabActivity = document.getElementById("tabActivity")
+        Set objTabTrace = document.getElementById("tabTrace")
+        Set objLogActivity = document.getElementById("logActivity")
+        Set objLogTrace = document.getElementById("logTrace")
+
+        If strTab = "activity" Then
+            objTabActivity.className = "tab-btn active"
+            objTabTrace.className = "tab-btn"
+            objLogActivity.style.display = "block"
+            objLogTrace.style.display = "none"
+        Else
+            objTabActivity.className = "tab-btn"
+            objTabTrace.className = "tab-btn active"
+            objLogActivity.style.display = "none"
+            objLogTrace.style.display = "block"
+        End If
+    End Sub
+
+    Sub TraceLog(strMessage)
+        ' Log to the traceroute tab (appends to bottom for natural order)
+        Dim objLog, objNewLine
+        Set objLog = document.getElementById("traceLog")
+
+        Set objNewLine = document.createElement("div")
+        objNewLine.innerText = strMessage
+        objLog.appendChild objNewLine
+
+        ' Auto-scroll to bottom
+        objLog.scrollTop = objLog.scrollHeight
+
+        Set objNewLine = Nothing
+        Set objLog = Nothing
+    End Sub
+
+    Sub DownloadLog()
+        Dim objLog, strContent, objFile, strFilePath, objChild
+        Set objLog = document.getElementById("log")
+
+        ' Build log content from div elements
+        strContent = "Ping Utility - Activity Log" & vbCrLf
+        strContent = strContent & "Exported: " & Now & vbCrLf
+        strContent = strContent & String(50, "=") & vbCrLf & vbCrLf
+
+        For Each objChild In objLog.childNodes
+            strContent = strContent & objChild.innerText & vbCrLf
+        Next
+
+        ' Save to file
+        strFilePath = gvoShell.CurrentDirectory & "\activity_log_" & Year(Now) & Right("0" & Month(Now), 2) & Right("0" & Day(Now), 2) & "_" & Right("0" & Hour(Now), 2) & Right("0" & Minute(Now), 2) & Right("0" & Second(Now), 2) & ".txt"
+        Set objFile = gvoFSO.CreateTextFile(strFilePath, True)
+        objFile.Write strContent
+        objFile.Close
+
+        ShowAlert "Log saved to:" & vbCrLf & strFilePath
+        LogMsg "Activity log exported to file"
+    End Sub
+
+    ' ========== Custom Modal Dialog Functions ==========
+    Sub ShowAlert(strMessage)
+        document.getElementById("modalTitle").innerText = "Alert"
+        document.getElementById("modalMessage").innerText = strMessage
+        document.getElementById("modalInput").style.display = "none"
+        document.getElementById("modalCancel").style.display = "none"
+        document.getElementById("modalOverlay").style.display = "block"
+        gvsModalCallback = ""
+    End Sub
+
+    Sub ShowPrompt(strTitle, strMessage, strCallback)
+        document.getElementById("modalTitle").innerText = strTitle
+        document.getElementById("modalMessage").innerText = strMessage
+        document.getElementById("modalInput").style.display = "block"
+        document.getElementById("modalInput").value = ""
+        document.getElementById("modalCancel").style.display = "inline-block"
+        document.getElementById("modalOverlay").style.display = "block"
+        document.getElementById("modalInput").focus
+        gvsModalCallback = strCallback
+    End Sub
+
+    Sub ModalOk()
+        gvsModalResult = document.getElementById("modalInput").value
+        document.getElementById("modalOverlay").style.display = "none"
+        If gvsModalCallback <> "" Then
+            Execute "Call " & gvsModalCallback & "(gvsModalResult)"
+        End If
+    End Sub
+
+    Sub ModalCancel()
+        gvsModalResult = ""
+        document.getElementById("modalOverlay").style.display = "none"
+        gvsModalCallback = ""
+    End Sub
+</script>
+
+<body onload="vbscript:Window_OnLoad()">
+    <!-- Hidden input to trigger maximize via HHCtrl -->
+    <input type="hidden" name="MaximizeWindow" id="MaximizeWindow" onclick="javascript:_jsMaxWin();" />
+
+    <div class="header">
+        <h1>Ping Utility</h1>
+        <div class="subtitle">Real-time network connectivity monitoring</div>
+    </div>
+
+    <div class="controls">
+        <button id="btnStart" class="btn btn-start" onclick="vbscript:ToggleMonitoring()">START</button>
+        <button class="btn btn-add" onclick="vbscript:AddIP()">+ ADD IP</button>
+        <button class="btn btn-reset" onclick="vbscript:ResetCounters()">RESET</button>
+        <label class="interval-badge">Ping Interval:
+            <select id="intervalSelect" onchange="vbscript:ChangeInterval()">
+                <option value="1000">1 second</option>
+                <option value="5000" selected>5 seconds</option>
+                <option value="30000">30 seconds</option>
+                <option value="60000">1 minute</option>
+                <option value="3600000">1 hour</option>
+            </select>
+        </label>
+        <label class="debug-toggle">
+            <input type="checkbox" id="debugToggle" onchange="vbscript:ToggleDebugLog()"> Show Debug Log
+        </label>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr><th>Name</th><th>IP Address</th><th>Status</th><th>Pings/Fail</th><th>Last Ping</th><th>Latency</th><th>Avg</th><th>Jitter</th><th>Loss %</th><th>Uptime %</th><th>Action</th></tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <div class="log-section">
+        <div class="tab-container">
+            <button class="tab-btn active" id="tabActivity" onclick="vbscript:SwitchTab('activity')">ACTIVITY LOG</button>
+            <button class="tab-btn" id="tabTrace" onclick="vbscript:SwitchTab('trace')">TRACEROUTE</button>
+            <button class="btn-download" onclick="vbscript:DownloadLog()">Download</button>
+        </div>
+        <div id="logActivity" class="tab-content" style="display: block;">
+            <div id="log"></div>
+        </div>
+        <div id="logTrace" class="tab-content" style="display: none;">
+            <div id="traceLog"></div>
+        </div>
+    </div>
+
+    <div class="log-section" id="debugSection" style="border: 2px solid #ff6600; margin-top: 10px; display: none;">
+        <h3 style="color: #ff6600;">DEBUG LOG</h3>
+        <div id="debugLog" style="height: 150px; overflow-y: auto; background: #1a1a2e; padding: 10px; font-family: monospace; font-size: 11px; color: #00ff00;"></div>
+    </div>
+
+    <!-- Custom Modal Dialog -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <div id="modalTitle" class="modal-title">Title</div>
+            <div id="modalMessage" class="modal-message"></div>
+            <input type="text" id="modalInput" class="modal-input" style="display:none;">
+            <div class="modal-buttons">
+                <button id="modalCancel" class="modal-btn modal-btn-cancel" onclick="vbscript:ModalCancel()" style="display:none;">Cancel</button>
+                <button id="modalOk" class="modal-btn modal-btn-ok" onclick="vbscript:ModalOk()">OK</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
