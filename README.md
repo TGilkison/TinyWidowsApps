@@ -1,6 +1,3 @@
-# TinyWidowsApps
-The smallest applications that run on Windows, that have amazing functionality and portability
-
 # Tiny Windows Apps 🪟
 
 A curated collection of the smallest, most portable Windows applications that pack amazing functionality into minimal file sizes. These apps demonstrate that you don't need bloat to build powerful tools.
